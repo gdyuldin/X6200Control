@@ -99,7 +99,7 @@ uint32_t calc_crc32(const uint32_t *data, uint16_t len)
 
     for (int i = 0; i < len; i++) {
         crc = crc ^ data[i];
-        
+
         for (int i = 0; i < 4; i++)
             crc = crctab[crc >> 24] ^ (crc << 8);
     }
@@ -152,12 +152,13 @@ AETHER_X6100CTRL_API bool x6100_flow_restart() {
     buf_size = 0;
 
     flow_fd = open("/dev/ttyS1", O_RDWR);
-    
+
     return flow_fd > 0;
 }
 
 static bool flow_check(x6100_flow_t *pack)
 {
+    bool result = false;
     uint8_t *begin = memmem(buf, buf_size, &magic, sizeof(magic));
 
     if (begin)
@@ -170,11 +171,15 @@ static bool flow_check(x6100_flow_t *pack)
             uint16_t tail_len = len - sizeof(x6100_flow_t);
 
             memcpy((void *) pack, (void *) begin, sizeof(x6100_flow_t));
-            
+
             uint32_t crc = calc_crc32(pack, sizeof(x6100_flow_t) / 4 - 1);
 
             if (pack->crc != crc) {
-                return false;
+                *tail_ptr = begin + 3;
+                tail_len = len - 3;
+                result = false;
+            } else {
+                result = true;
             }
 
             memmove(buf, tail_ptr, tail_len);
@@ -182,11 +187,11 @@ static bool flow_check(x6100_flow_t *pack)
             buf_read = buf + tail_len;
             buf_size = tail_len;
 
-            return true;
+            return result;
         }
     }
 
-    return false;
+    return result;
 }
 
 bool x6100_flow_read(x6100_flow_t *pack)
