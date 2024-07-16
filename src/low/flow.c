@@ -7,11 +7,13 @@
  *  Copyright (c) 2022 Rui Oliveira aka CT7ALW
  */
 
+#define _GNU_SOURCE
 #include "aether_radio/x6100_control/low/flow.h"
 
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
@@ -22,7 +24,6 @@ static int flow_fd;
 
 static uint8_t *buf = NULL;
 static uint8_t *buf_read = NULL;
-static uint16_t buf_size = 0;
 
 static const uint32_t magic = 0xAA5555AA;
 
@@ -138,7 +139,6 @@ bool x6100_flow_init()
 
     buf = malloc(BUF_SIZE);
     buf_read = buf;
-    buf_size = 0;
 
     return true;
 }
@@ -149,7 +149,6 @@ AETHER_X6100CTRL_API bool x6100_flow_restart() {
     usleep(10000);
 
     buf_read = buf;
-    buf_size = 0;
 
     flow_fd = open("/dev/ttyS1", O_RDWR);
 
@@ -158,58 +157,51 @@ AETHER_X6100CTRL_API bool x6100_flow_restart() {
 
 static bool flow_check(x6100_flow_t *pack)
 {
+    uint8_t* tail_ptr = buf;
+
     bool result = false;
-    uint8_t *begin = memmem(buf, buf_size, &magic, sizeof(magic));
+    while (buf_read > (tail_ptr + sizeof(x6100_flow_t))) {
+        uint8_t *begin = memmem(tail_ptr, buf_read - tail_ptr, &magic, sizeof(magic));
 
-    if (begin)
-    {
-        uint32_t len = buf + buf_size - begin;
+        if (begin == NULL) {
+            tail_ptr = buf_read;
+            break;
+        }
 
-        if (len >= sizeof(x6100_flow_t))
-        {
-            uint8_t *tail_ptr = begin + sizeof(x6100_flow_t);
-            uint16_t tail_len = len - sizeof(x6100_flow_t);
+        uint32_t crc = calc_crc32((const uint32_t*)begin, sizeof(x6100_flow_t) / 4 - 1);
+        size_t crc_offset = offsetof(x6100_flow_t, crc);
+        uint32_t pack_crc = *(uint32_t*)(begin + crc_offset);
 
+        if (pack_crc != crc) {
+            tail_ptr = begin + 3;
+        } else {
+            result = true;
             memcpy((void *) pack, (void *) begin, sizeof(x6100_flow_t));
-
-            uint32_t crc = calc_crc32(pack, sizeof(x6100_flow_t) / 4 - 1);
-
-            if (pack->crc != crc) {
-                *tail_ptr = begin + 3;
-                tail_len = len - 3;
-                result = false;
-            } else {
-                result = true;
-            }
-
-            memmove(buf, tail_ptr, tail_len);
-
-            buf_read = buf + tail_len;
-            buf_size = tail_len;
-
-            return result;
+            tail_ptr = begin + sizeof(x6100_flow_t);
+            break;
         }
     }
-
+    uint16_t tail_len = buf_read - tail_ptr;
+    if (tail_len)
+        memmove(buf, tail_ptr, tail_len);
+    buf_read = buf + tail_len;
     return result;
 }
 
 bool x6100_flow_read(x6100_flow_t *pack)
 {
-    if (buf_size >= BUF_SIZE)
+    if ((buf_read - buf) >= BUF_SIZE)
     {
-        buf_size = 0;
         buf_read = buf;
     }
 
-    int res = read(flow_fd, buf_read, BUF_SIZE - buf_size);
+    int res = read(flow_fd, buf_read, BUF_SIZE - (buf_read - buf));
 
     if (res > 0)
     {
-        buf_size += res;
         buf_read += res;
 
-        if (buf_size > sizeof(x6100_flow_t))
+        if ((buf_read - buf) > sizeof(x6100_flow_t))
         {
             return flow_check(pack);
         }
