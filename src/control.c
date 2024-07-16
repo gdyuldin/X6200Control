@@ -18,10 +18,11 @@ void x6100_control_vfo_mode_set(x6100_vfo_t vfo, x6100_mode_t mode)
     x6100_control_cmd(vfo == X6100_VFO_A ? x6100_vfoa_mode : x6100_vfob_mode, mode);
 }
 
-void x6100_control_vfo_freq_set(x6100_vfo_t vfo, uint32_t freq) 
+void x6100_control_vfo_freq_set(x6100_vfo_t vfo, uint32_t freq)
 {
-    if (vfo == X6100_VFO_A) 
+    if (vfo == X6100_VFO_A)
     {
+        // TODO: Perhaps, is should be called on any vfo value
         x6100_control_set_band(freq);
         x6100_control_cmd(x6100_vfoa_freq, freq);
     } else {
@@ -55,13 +56,13 @@ void x6100_control_record_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_voice_rec;
     } else {
         next = prev & (~x6100_voice_rec);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
@@ -77,53 +78,53 @@ void x6100_control_spmode_set(bool phone)
 void x6100_control_ptt_set(bool on) {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_iptt;
     } else {
         next = prev & (~x6100_iptt);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
-void x6100_control_atu_tune(bool on) 
+void x6100_control_atu_tune(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_atu_tune;
     } else {
         next = prev & (~x6100_atu_tune);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
-void x6100_control_poweroff() 
+void x6100_control_poweroff()
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next = prev | x6100_power_off;
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
     sleep(1);
-    
+
     /* Send poweroff to init process */
-    kill(1, SIGUSR2);   
+    kill(1, SIGUSR2);
 }
 
 void x6100_control_split_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_sple;
     } else {
         next = prev & (~x6100_sple);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
@@ -131,13 +132,13 @@ void x6100_control_atu_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_atue;
     } else {
         next = prev & (~x6100_atue);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
@@ -145,13 +146,13 @@ void x6100_control_modem_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_modem_trx;
     } else {
         next = prev & (~x6100_modem_trx);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
@@ -159,13 +160,13 @@ void x6100_control_swrscan_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_swrscan_trx;
     } else {
         next = prev & (~x6100_swrscan_trx);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
@@ -173,26 +174,26 @@ void x6100_control_calibration_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_sple_atue_trx);
     uint32_t next;
-    
+
     if (on) {
         next = prev | x6100_calibration_trx;
     } else {
         next = prev & (~x6100_calibration_trx);
     }
-    
+
     x6100_control_cmd(x6100_sple_atue_trx, next);
 }
 
 void x6100_control_rfg_set(uint8_t rfg) {
     uint32_t prev = x6100_control_get(x6100_rfg_txpwr) & (~0xFF);
-    
+
     x6100_control_cmd(x6100_rfg_txpwr, prev | rfg);
 }
 
 void x6100_control_txpwr_set(float pwr) {
     uint32_t prev = x6100_control_get(x6100_rfg_txpwr) & (0xFF);
     uint8_t  p = pwr * 10.0f;
-    
+
     x6100_control_cmd(x6100_rfg_txpwr, prev | (p << 8));
 }
 
@@ -204,13 +205,13 @@ void x6100_control_charger_set(bool on) {
 
 void x6100_control_bias_drive_set(uint16_t x) {
     uint32_t prev = x6100_control_get(x6100_biasdrive_biasfinal) & (0xFFFF);
-    
+
     x6100_control_cmd(x6100_biasdrive_biasfinal, prev | x);
 }
 
 void x6100_control_bias_final_set(uint16_t x) {
     uint32_t prev = x6100_control_get(x6100_biasdrive_biasfinal) & ((uint32_t) 0xFFFF << 16);
-    
+
     x6100_control_cmd(x6100_biasdrive_biasfinal, prev | (x << 16));
 }
 
@@ -224,37 +225,37 @@ void x6100_control_sql_set(uint8_t sql) {
 
 void x6100_control_key_speed_set(uint8_t wpm) {
     uint32_t prev = x6100_control_get(x6100_ks_km_kimb_cwtone_cwvol_cwtrain) & (~0xFF);
-    
+
     x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, prev | wpm);
 }
 
 void x6100_control_key_mode_set(x6100_key_mode_t mode) {
     uint32_t prev = x6100_control_get(x6100_ks_km_kimb_cwtone_cwvol_cwtrain) & (~(3 << 8));
-    
+
     x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, prev | ((mode & 3) << 8));
 }
 
 void x6100_control_iambic_mode_set(x6100_iambic_mode_t mode) {
     uint32_t prev = x6100_control_get(x6100_ks_km_kimb_cwtone_cwvol_cwtrain) & (~(3 << 10));
-    
+
     x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, prev | ((mode & 3) << 10));
 }
 
 void x6100_control_key_tone_set(uint16_t tone) {
     uint32_t prev = x6100_control_get(x6100_ks_km_kimb_cwtone_cwvol_cwtrain) & (~(0x7FF << 12));
-    
+
     x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, prev | ((tone & 0x7FF) << 12));
 }
 
 void x6100_control_key_vol_set(uint16_t vol) {
     uint32_t prev = x6100_control_get(x6100_ks_km_kimb_cwtone_cwvol_cwtrain) & (~(0x3F << 23));
-    
+
     x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, prev | ((vol & 0x3F) << 23));
 }
 
 void x6100_control_key_train_set(bool train) {
     uint32_t prev = x6100_control_get(x6100_ks_km_kimb_cwtone_cwvol_cwtrain) & (~(1 << 29));
-    
+
     x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, prev | ((train & 1) << 29));
 }
 
@@ -405,4 +406,17 @@ void x6100_control_vox_gain_set(uint8_t level) {
     uint32_t prev = x6100_control_get(x6100_voxg_voxag_voxdly_voxe) & (~0x7F);
 
     x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, prev | (level & 0x7F));
+}
+
+void x6100_control_comp_set(bool on)
+{
+    uint32_t prev = x6100_control_get(x6100_cmplevel_cmpe) & (~(1 << 4));
+    x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, prev | (on << 4));
+
+}
+
+void x6100_control_comp_level_set(x6100_comp_level_t level)
+{
+    uint32_t prev = x6100_control_get(x6100_cmplevel_cmpe) & (~0xf);
+    x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, prev | (level & 0xf));
 }

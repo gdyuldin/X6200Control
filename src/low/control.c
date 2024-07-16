@@ -42,7 +42,7 @@ static uint8_t cur_band = 0;
 static uint64_t get_time()
 {
     struct timeval now;
-    
+
     gettimeofday(&now, NULL);
     uint64_t usec = (uint64_t) now.tv_sec * 1000000L + now.tv_usec;
 
@@ -81,10 +81,10 @@ bool x6100_control_init()
     all_cmd.arg[x6100_vi_vm] = 0x00000100;
     all_cmd.arg[x6100_rxvol] = 0;
     all_cmd.arg[x6100_rfg_txpwr] = (10 << 8) | 64;
-    
+
     all_cmd.arg[x6100_agcknee_agcslope_agchang] = 0x000006C4;
     all_cmd.arg[x6100_agctime] = 500;
-    
+
     all_cmd.arg[x6100_filter1_low] = (uint32_t) 50.0f;
     all_cmd.arg[x6100_filter1_high] = (uint32_t) 2950.0;
     all_cmd.arg[x6100_filter2_low] = (uint32_t) 50.0f;

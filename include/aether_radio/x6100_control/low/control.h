@@ -59,10 +59,10 @@ typedef enum
     x6100_filter2_low,
     x6100_filter2_high,
 
-    x6100_rphscmp = 48,
-    x6100_rmagcmp,
-    x6100_txiofs,
-    x6100_txqofs,
+    x6100_rphscmp = 48, // RX PHS COMP
+    x6100_rmagcmp, // RX MAG COMP
+    x6100_txiofs, // TXI DC OFFSET
+    x6100_txqofs, // TXQ DC OFFSET
 
     x6100_pwrsync = 53,
     x6100_last = 55
@@ -135,6 +135,13 @@ typedef enum {
     x6100_mic_handle,
     x6100_mic_auto
 } x6100_mic_sel_t;
+
+typedef enum {
+    x6100_comp_off = 0,
+    x6100_comp_1_2,
+    x6100_comp_1_4,
+    x6100_comp_1_8
+} x6100_comp_level_t;
 
 /* Functions */
 
