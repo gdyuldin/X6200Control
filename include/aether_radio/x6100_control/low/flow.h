@@ -44,12 +44,10 @@ typedef struct
 {
     bool resync : 1;
     bool tx : 1;
-    bool chg : 1;
-    bool vext : 1;
-    uint32_t : 25;
     bool atu_status : 1;
-    bool reserved : 1;
-    bool reserved_2 : 1;
+    bool vext : 1;
+    bool charging: 1;
+    uint32_t : 27;
 } x6100_flow_flags_t;
 
 typedef struct __attribute__((__packed__))
