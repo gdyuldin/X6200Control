@@ -25,6 +25,8 @@ static int flow_fd;
 static uint8_t *buf = NULL;
 static uint8_t *buf_read = NULL;
 
+static uint32_t prev_hkey = 0;
+
 static const uint32_t magic = 0xAA5555AA;
 
 static uint32_t crctab[256] = {
@@ -157,27 +159,48 @@ AETHER_X6100CTRL_API bool x6100_flow_restart() {
 
 static bool flow_check(x6100_flow_t *pack)
 {
+    uint32_t crc;
+    uint32_t hkey;
+    uint32_t pack_crc;
+    uint8_t *begin;
+
+    size_t hkey_offset = offsetof(x6100_flow_t, hkey);
+    size_t crc_offset = offsetof(x6100_flow_t, crc);
+
     uint8_t* tail_ptr = buf;
 
     bool result = false;
     while (buf_read > (tail_ptr + sizeof(x6100_flow_t))) {
-        uint8_t *begin = memmem(tail_ptr, buf_read - tail_ptr, &magic, sizeof(magic));
+        begin = memmem(tail_ptr, buf_read - tail_ptr, &magic, sizeof(magic));
 
         if (begin == NULL) {
             tail_ptr = buf_read;
             break;
         }
+        hkey = *(uint32_t*)(begin + hkey_offset);
+        pack_crc = *(uint32_t*)(begin + crc_offset);
 
-        uint32_t crc = calc_crc32((const uint32_t*)begin, sizeof(x6100_flow_t) / 4 - 1);
-        size_t crc_offset = offsetof(x6100_flow_t, crc);
-        uint32_t pack_crc = *(uint32_t*)(begin + crc_offset);
+        crc = calc_crc32((const uint32_t*)begin, sizeof(x6100_flow_t) / 4 - 1);
 
-        if (pack_crc != crc) {
+        if (pack_crc == crc) {
+            result = true;
+        } else {
+            // Try use previous hkey
+            *(uint32_t*)(begin + hkey_offset) = prev_hkey;
+            crc = calc_crc32((const uint32_t*)begin, sizeof(x6100_flow_t) / 4 - 1);
+            if (pack_crc == crc) {
+                result = true;
+            }
+        }
+
+        if (!result) {
+            printf("wrong crc\n");
             tail_ptr = begin + 3;
         } else {
-            result = true;
             memcpy((void *) pack, (void *) begin, sizeof(x6100_flow_t));
+            pack->hkey = hkey;
             tail_ptr = begin + sizeof(x6100_flow_t);
+            prev_hkey = hkey;
             break;
         }
     }
