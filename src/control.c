@@ -284,6 +284,12 @@ void x6100_control_lineout_set(uint8_t gain) {
     x6100_control_cmd(x6100_ling_loutg_imicg_hmicg, prev | (gain << 8));
 }
 
+void x6100_control_iqout_set(bool on) {
+    uint32_t prev = x6100_control_get(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr) & (~(1 << 8));
+
+    x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (on << 8));
+}
+
 void x6100_control_imic_set(uint8_t gain) {
     uint32_t prev = x6100_control_get(x6100_ling_loutg_imicg_hmicg) & (~(0xFF << 16));
 
