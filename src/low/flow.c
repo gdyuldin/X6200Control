@@ -23,7 +23,7 @@
 static int flow_fd;
 
 static uint8_t *buf = NULL;
-static uint8_t *buf_read = NULL;
+static uint8_t *buf_write = NULL;
 
 static uint32_t prev_hkey = 0;
 
@@ -109,9 +109,7 @@ uint32_t calc_crc32(const uint32_t *data, uint16_t len)
 
     return crc;
 }
-
-bool x6100_flow_init()
-{
+static bool open_flow_fd() {
     flow_fd = open("/dev/ttyS1", O_RDWR | O_NONBLOCK| O_NOCTTY);
 
     if (flow_fd < 0)
@@ -138,23 +136,27 @@ bool x6100_flow_init()
         close(flow_fd);
         return false;
     }
+    return true;
+}
 
+bool x6100_flow_init()
+{
+    if (!open_flow_fd()) {
+        return false;
+    }
     buf = malloc(BUF_SIZE);
-    buf_read = buf;
+    buf_write = buf;
 
     return true;
 }
 
 AETHER_X6100CTRL_API bool x6100_flow_restart() {
     close(flow_fd);
+    buf_write = buf;
 
     usleep(10000);
 
-    buf_read = buf;
-
-    flow_fd = open("/dev/ttyS1", O_RDWR);
-
-    return flow_fd > 0;
+    return open_flow_fd();
 }
 
 static bool flow_check(x6100_flow_t *pack)
@@ -167,16 +169,21 @@ static bool flow_check(x6100_flow_t *pack)
     size_t hkey_offset = offsetof(x6100_flow_t, hkey);
     size_t crc_offset = offsetof(x6100_flow_t, crc);
 
-    uint8_t* tail_ptr = buf;
+    uint8_t* read_ptr = buf;
 
     bool result = false;
-    while (buf_read > (tail_ptr + sizeof(x6100_flow_t))) {
-        begin = memmem(tail_ptr, buf_read - tail_ptr, &magic, sizeof(magic));
+    while ((buf_write - read_ptr) >= sizeof(x6100_flow_t)) {
+        begin = memmem(read_ptr, buf_write - read_ptr, &magic, sizeof(magic));
 
         if (begin == NULL) {
-            tail_ptr = buf_read;
+            read_ptr = buf_write - sizeof(magic);
             break;
         }
+        if ((buf_write - begin) < sizeof(x6100_flow_t)) {
+            read_ptr = begin;
+            break;
+        }
+
         hkey = *(uint32_t*)(begin + hkey_offset);
         pack_crc = *(uint32_t*)(begin + crc_offset);
 
@@ -194,38 +201,41 @@ static bool flow_check(x6100_flow_t *pack)
         }
 
         if (!result) {
-            printf("wrong crc\n");
-            tail_ptr = begin + 3;
+            read_ptr = begin + 3;
+
         } else {
             memcpy((void *) pack, (void *) begin, sizeof(x6100_flow_t));
             pack->hkey = hkey;
-            tail_ptr = begin + sizeof(x6100_flow_t);
+            read_ptr = begin + sizeof(x6100_flow_t);
             prev_hkey = hkey;
             break;
         }
     }
-    uint16_t tail_len = buf_read - tail_ptr;
-    if (tail_len)
-        memmove(buf, tail_ptr, tail_len);
-    buf_read = buf + tail_len;
+
+    if (read_ptr < buf_write) {
+        uint16_t tail_len = buf_write - read_ptr;
+        memmove(buf, read_ptr, tail_len);
+        buf_write = buf + tail_len;
+    }
     return result;
 }
 
 bool x6100_flow_read(x6100_flow_t *pack)
 {
-    if ((buf_read - buf) >= BUF_SIZE)
-    {
-        buf_read = buf;
+    size_t buf_space = buf + BUF_SIZE - buf_write;
+    size_t buf_used = buf_write - buf;
+    if (buf_space < sizeof(x6100_flow_t)) {
+        size_t shift = sizeof(x6100_flow_t) - buf_space;
+        memmove(buf, buf + shift, buf_used - shift);
+        buf_write -= shift;
     }
 
-    int res = read(flow_fd, buf_read, BUF_SIZE - (buf_read - buf));
+    int res = read(flow_fd, buf_write, sizeof(x6100_flow_t));
 
-    if (res > 0)
-    {
-        buf_read += res;
+    if (res > 0) {
+        buf_write += res;
 
-        if ((buf_read - buf) > sizeof(x6100_flow_t))
-        {
+        if ((buf_write - buf) > sizeof(x6100_flow_t)) {
             return flow_check(pack);
         }
     }
