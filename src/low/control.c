@@ -37,23 +37,48 @@ static int i2c_addr = 0x72;
 static all_cmd_struct_t all_cmd;
 static uint8_t cur_band = 0;
 
-/* * */
-
-static uint64_t get_time()
-{
-    struct timeval now;
-
-    gettimeofday(&now, NULL);
-    uint64_t usec = (uint64_t) now.tv_sec * 1000000L + now.tv_usec;
-
-    return  usec / 1000;
-}
-
 static bool send_regs(void *regs, size_t size)
 {
-    int res = write(i2c_fd, regs, size);
+    struct i2c_msg messages[] = {
+        {
+            .addr = i2c_addr,
+            .flags = 0,
+            .buf = regs,
+            .len = size,
+        }
+    };
+    struct i2c_rdwr_ioctl_data packets = {
+        .msgs = messages,
+        .nmsgs = 1,
+    };
 
-    return (res == size);
+    if(ioctl(i2c_fd, I2C_RDWR, &packets) < 0) {
+        return false;
+    }
+    return true;
+}
+
+static bool get_regs(uint16_t reg, void *buf, uint8_t cnt) {
+    reg = (reg & 0xFF) << 8 | (reg >> 8);
+    send_regs(&reg, 2);
+    struct i2c_msg messages[] = {
+        {
+            .addr  = i2c_addr,
+            .flags = I2C_M_RD,
+            .len   = cnt,
+            .buf   = buf,
+        },
+    };
+
+    struct i2c_rdwr_ioctl_data packets = {
+        .msgs      = messages,
+        .nmsgs     = 1,
+    };
+
+    if(ioctl(i2c_fd, I2C_RDWR, &packets) < 0) {
+        return false;
+    }
+    return true;
 }
 
 bool x6100_control_init()
@@ -63,8 +88,6 @@ bool x6100_control_init()
     if (i2c_fd < 0)
         return false;
 
-    if (ioctl(i2c_fd, I2C_SLAVE, i2c_addr) < 0)
-        return false;
 
     memset(&all_cmd, 0, sizeof(all_cmd));
 
@@ -98,8 +121,6 @@ bool x6100_control_init()
 
 bool x6100_control_cmd(x6100_cmd_enum_t cmd, uint32_t arg)
 {
-    uint64_t now = get_time();
-
     all_cmd.arg[cmd] = arg;
 
     cmd_struct_t command;
@@ -116,12 +137,23 @@ uint32_t x6100_control_get(x6100_cmd_enum_t cmd)
     return all_cmd.arg[cmd];
 }
 
-void x6100_control_idle()
+char *x6100_control_get_fw_version()
 {
-    send_regs(&all_cmd, sizeof(all_cmd));
+    static char version[0x80] = "\0";
+    if (get_regs(0, version, 0x80))
+        return version;
+    else
+        return NULL;
 }
 
-// TODO: This is a reversed code. Need to translate from Chinese to normal
+void x6100_control_idle()
+{
+    if (!send_regs(&all_cmd, sizeof(all_cmd))) {
+        close(i2c_fd);
+        usleep(1000);
+        x6100_control_init();
+    }
+}
 
 static uint8_t band_index(int freq)
 {
@@ -155,26 +187,23 @@ static uint8_t band_index(int freq)
         return 13;
     } else if (freq < 21000000) {
         return 14;
-    } else if (21450000 < freq) {
-        if (freq < 24890000) {
-            return 16;
-        } else if (freq <= 24990000) {
-            return 17;
-        } else if (freq < 28000000) {
-            return 18;
-        } else if (freq > 29700000) {
-            if (freq > 50000000) {
-                if (freq > 54000000) {
-                    return 22;
-                }
-                return 21;
-            }
-            return 20;
-        }
+    } else if (freq <= 21450000) {
+        return 15;
+    } else if (freq < 24890000) {
+        return 16;
+    } else if (freq <= 24990000) {
+        return 17;
+    } else if (freq < 28000000) {
+        return 18;
+    } else if (freq <= 29700000) {
         return 19;
+    } else if (freq < 50000000) {
+        return 20;
+    } else if (freq <= 54000000) {
+        return 21;
+    } else {
+        return 22;
     }
-
-  return 15;
 }
 
 void x6100_control_set_band(uint32_t freq)

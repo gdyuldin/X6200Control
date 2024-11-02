@@ -414,15 +414,17 @@ void x6100_control_vox_gain_set(uint8_t level) {
     x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, prev | (level & 0x7F));
 }
 
+/* COMP */
+
 void x6100_control_comp_set(bool on)
 {
     uint32_t prev = x6100_control_get(x6100_cmplevel_cmpe) & (~(1 << 4));
-    x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, prev | (on << 4));
+    x6100_control_cmd(x6100_cmplevel_cmpe, prev | (on << 4));
 
 }
 
 void x6100_control_comp_level_set(x6100_comp_level_t level)
 {
     uint32_t prev = x6100_control_get(x6100_cmplevel_cmpe) & (~0xf);
-    x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, prev | (level & 0xf));
+    x6100_control_cmd(x6100_cmplevel_cmpe, prev | (level & 0xf));
 }
