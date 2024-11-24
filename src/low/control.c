@@ -13,6 +13,7 @@
 #include <linux/i2c-dev.h>
 #include <linux/i2c.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -32,13 +33,39 @@ typedef struct __attribute__((__packed__))
     uint32_t arg[x6100_last + 1];
 } all_cmd_struct_t;
 
-static int i2c_fd = 0;
+static int i2c_fd = -1;
 static int i2c_addr = 0x72;
 static all_cmd_struct_t all_cmd;
 static uint8_t cur_band = 0;
 
+static bool i2c_open()
+{
+    i2c_fd = open("/dev/i2c-0", O_RDWR);
+    if (i2c_fd < 0) {
+        perror("Can't open i2c");
+        return false;
+    }
+    return true;
+}
+
+static void i2c_close()
+{
+    if (i2c_fd < 0) {
+        printf("Can't close i2c, not opened\n");
+        return;
+    }
+    if (close(i2c_fd) < 0) {
+        perror("Can't close i2c");
+    }
+    i2c_fd = -1;
+}
+
 static bool send_regs(void *regs, size_t size)
 {
+    if (i2c_fd < 0) {
+        printf("Can't write to i2c, not opened\n");
+        return false;
+    }
     struct i2c_msg messages[] = {
         {
             .addr = i2c_addr,
@@ -53,14 +80,21 @@ static bool send_regs(void *regs, size_t size)
     };
 
     if(ioctl(i2c_fd, I2C_RDWR, &packets) < 0) {
+        perror("Can't write to i2c");
         return false;
     }
     return true;
 }
 
 static bool get_regs(uint16_t reg, void *buf, uint8_t cnt) {
+    if (i2c_fd < 0) {
+        printf("Can't read from i2c, not opened");
+        return false;
+    }
     reg = (reg & 0xFF) << 8 | (reg >> 8);
-    send_regs(&reg, 2);
+    if (!send_regs(&reg, 2)) {
+        return false;
+    }
     struct i2c_msg messages[] = {
         {
             .addr  = i2c_addr,
@@ -76,6 +110,7 @@ static bool get_regs(uint16_t reg, void *buf, uint8_t cnt) {
     };
 
     if(ioctl(i2c_fd, I2C_RDWR, &packets) < 0) {
+        perror("Can't read from i2c");
         return false;
     }
     return true;
@@ -83,11 +118,9 @@ static bool get_regs(uint16_t reg, void *buf, uint8_t cnt) {
 
 bool x6100_control_init()
 {
-    i2c_fd = open("/dev/i2c-0", O_RDWR);
-
-    if (i2c_fd < 0)
+    if(!i2c_open()) {
         return false;
-
+    }
 
     memset(&all_cmd, 0, sizeof(all_cmd));
 
@@ -149,9 +182,10 @@ char *x6100_control_get_fw_version()
 void x6100_control_idle()
 {
     if (!send_regs(&all_cmd, sizeof(all_cmd))) {
-        close(i2c_fd);
+        i2c_close();
         usleep(1000);
-        x6100_control_init();
+        i2c_open();
+        send_regs(&all_cmd, sizeof(all_cmd));
     }
 }
 
