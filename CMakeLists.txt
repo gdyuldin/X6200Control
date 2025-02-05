@@ -80,6 +80,10 @@ target_sources(
          FILE_SET HEADERS #
          FILES ${CMAKE_CURRENT_BINARY_DIR}/${AETHER_X6100CTRL_EXPORT_HEADER_FILE})
 
+target_link_libraries(aether_x6100_control PRIVATE
+  gpiod
+)
+
 # Code for the library
 add_subdirectory(include)
 add_subdirectory(src)
