@@ -11,6 +11,8 @@
 #include <signal.h>
 #include "aether_radio/x6100_control/control.h"
 
+static x6100_vfo_t fg_vfo;
+
 /* VFO Settings */
 
 void x6100_control_vfo_mode_set(x6100_vfo_t vfo, x6100_mode_t mode)
@@ -20,12 +22,21 @@ void x6100_control_vfo_mode_set(x6100_vfo_t vfo, x6100_mode_t mode)
 
 void x6100_control_vfo_freq_set(x6100_vfo_t vfo, uint32_t freq)
 {
+    if (vfo == fg_vfo)
+    {
+        if (x6100_control_set_band(freq)) {
+            // Seems, BASE switches to VFO-A, when band was changed.
+            // Force switch to active VFO.
+            x6100_control_vfo_set(fg_vfo);
+        }
+    }
+
     if (vfo == X6100_VFO_A)
     {
-        // TODO: Perhaps, is should be called on any vfo value
-        x6100_control_set_band(freq);
         x6100_control_cmd(x6100_vfoa_freq, freq);
-    } else {
+    }
+    else
+    {
         x6100_control_cmd(x6100_vfob_freq, freq);
     }
 }
@@ -309,6 +320,8 @@ void x6100_control_mic_set(x6100_mic_sel_t mic) {
 }
 
 void x6100_control_vfo_set(x6100_vfo_t vfo) {
+    fg_vfo = vfo;
+
     uint32_t prev = x6100_control_get(x6100_vi_vm) & (~(0xFF));
 
     x6100_control_cmd(x6100_vi_vm, prev | vfo);

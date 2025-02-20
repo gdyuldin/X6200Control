@@ -240,7 +240,7 @@ static uint8_t band_index(int freq)
     }
 }
 
-void x6100_control_set_band(uint32_t freq)
+bool x6100_control_set_band(uint32_t freq)
 {
     uint8_t band = band_index(freq);
 
@@ -249,5 +249,7 @@ void x6100_control_set_band(uint32_t freq)
         cur_band = band;
 
         x6100_control_cmd(x6100_vi_vm, cur_band << 8);
-   }
+        return true;
+    }
+    return false;
 }
