@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include "aether_radio/x6100_control/control.h"
+#include "aether_radio/x6100_control/low/flow.h"
 
 static x6100_vfo_t fg_vfo;
 
@@ -84,6 +85,38 @@ void x6100_control_spmode_set(bool phone)
     x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (phone << 5));
 }
 
+/* Filters */
+
+void x6100_control_ssb_filter_set_set(uint16_t low, uint16_t high)
+{
+    uint32_t val = (((uint32_t)high) << 16) + low;
+    x6100_control_cmd(x6100_filter_ssb, val);
+    // x6100_control_cmd(x6100_filter_ssb_2, val);
+}
+
+void x6100_control_rx_filter_set(uint16_t low, uint16_t high)
+{
+    uint32_t val = (((uint32_t)low) << 16) + high;
+    x6100_control_cmd(x6100_rxfilter, val);
+    // x6100_control_cmd(x6100_filter_ssb_2, val);
+}
+
+void x6100_control_rx_filter_set_low(uint16_t low)
+{
+    uint32_t val = x6100_control_get(x6100_rxfilter) & (0x0000FFFF);
+    val |= (((uint32_t)low) << 16);
+    x6100_control_cmd(x6100_rxfilter, val);
+    // x6100_control_cmd(x6100_filter_ssb_2, val);
+}
+
+void x6100_control_rx_filter_set_high(uint16_t high)
+{
+    uint32_t val = x6100_control_get(x6100_rxfilter) & (0xFFFF0000);
+    val |= high;
+    x6100_control_cmd(x6100_rxfilter, val);
+    // x6100_control_cmd(x6100_filter_ssb_2, val);
+}
+
 /* Operation */
 
 void x6100_control_ptt_set(bool on) {
@@ -111,6 +144,13 @@ void x6100_control_atu_tune(bool on)
     }
 
     x6100_control_cmd(x6100_sple_atue_trx, next);
+
+    if (on) {
+        x6100_control_host_cmd(0x8004);
+    } else {
+        // x6100_control_host_cmd(0x8003);
+        // x6100_control_host_cmd(0x8002);
+    }
 }
 
 void x6100_control_poweroff()
@@ -232,6 +272,41 @@ void x6100_control_sql_set(uint8_t sql) {
     x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (sql << 8));
 }
 
+void x6100_control_sql_fm_set(uint8_t sql) {
+    uint32_t prev = x6100_control_get(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr) & (~(0xFF << 8));
+
+    x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (sql << 16));
+}
+
+void x6100_control_sql_enable_set(bool on) {
+    uint32_t prev = x6100_control_get(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr) & (~(1 << 24));
+
+    x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (on << 24));
+}
+
+void x6100_control_monitor_level_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~0xFF);
+
+    x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, prev | level);
+}
+
+void x6100_control_fft_dec_set(uint8_t dec) {
+    uint8_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~(0xF << 8));
+
+    x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, prev | (dec & 0xF) << 8);
+}
+
+void x6100_control_fft_zoom_cw_set(uint8_t zoom) {
+    uint8_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~(0xF << 12));
+
+    x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, prev | (zoom & 0xF) << 12);
+}
+
+// void x6100_control_rx_filter_set(bool on) {
+//     x6100_control_cmd(x6100_rxfilter, on);
+// }
+
+
 /* Keyer settings */
 
 void x6100_control_key_speed_set(uint8_t wpm) {
@@ -296,9 +371,9 @@ void x6100_control_lineout_set(uint8_t gain) {
 }
 
 void x6100_control_iqout_set(bool on) {
-    uint32_t prev = x6100_control_get(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr) & (~(1 << 8));
+    uint32_t prev = x6100_control_get(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr) & (~(1 << 6));
 
-    x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (on << 8));
+    x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, prev | (on << 6));
 }
 
 void x6100_control_imic_set(uint8_t gain) {
@@ -325,6 +400,21 @@ void x6100_control_vfo_set(x6100_vfo_t vfo) {
     uint32_t prev = x6100_control_get(x6100_vi_vm) & (~(0xFF));
 
     x6100_control_cmd(x6100_vi_vm, prev | vfo);
+}
+
+void x6100_control_vm_set(bool on) {
+
+    uint32_t prev = x6100_control_get(x6100_vi_vm);
+
+    uint32_t next;
+
+    if (on) {
+        next = prev | 0x10000;
+    } else {
+        next = prev & 0xfffeffff;
+    }
+
+    x6100_control_cmd(x6100_vi_vm, next);
 }
 
 /* DSP */
@@ -440,4 +530,125 @@ void x6100_control_comp_level_set(x6100_comp_level_t level)
 {
     uint32_t prev = x6100_control_get(x6100_cmplevel_cmpe) & (~0xf);
     x6100_control_cmd(x6100_cmplevel_cmpe, prev | (level & 0xf));
+}
+
+/* RX EQ */
+void x6100_control_rx_eq_set(bool on) {
+    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(1 << 25));
+
+    x6100_control_cmd(x6100_rxeq, prev | (on << 25));
+}
+
+void x6100_control_rx_eq_p1_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeq) & (~0x1F);
+
+    x6100_control_cmd(x6100_rxeq, prev | (level & 0x1F));
+}
+
+void x6100_control_rx_eq_p2_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 5));
+
+    x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 5));
+}
+
+void x6100_control_rx_eq_p3_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 10));
+
+    x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 10));
+}
+
+void x6100_control_rx_eq_p4_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 15));
+
+    x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 15));
+}
+
+void x6100_control_rx_eq_p5_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 20));
+
+    x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 20));
+}
+
+/* RX EQ WFM */
+void x6100_control_rx_eq_wfm_set(bool on) {
+    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(1 << 25));
+
+    x6100_control_cmd(x6100_rxeqwfm, prev | (on << 25));
+}
+
+void x6100_control_rx_eq_wfm_p1_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~0x1F);
+
+    x6100_control_cmd(x6100_rxeqwfm, prev | (level & 0x1F));
+}
+
+void x6100_control_rx_eq_wfm_p2_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 5));
+
+    x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 5));
+}
+
+void x6100_control_rx_eq_wfm_p3_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 10));
+
+    x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 10));
+}
+
+void x6100_control_rx_eq_wfm_p4_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 15));
+
+    x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 15));
+}
+
+void x6100_control_rx_eq_wfm_p5_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 20));
+
+    x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 20));
+}
+
+/* MIC EQ */
+void x6100_control_mic_eq_set(bool on) {
+    uint8_t prev = x6100_control_get(x6100_miceq) & (~(1 << 25));
+
+    x6100_control_cmd(x6100_miceq, prev | (on << 25));
+}
+
+void x6100_control_mic_eq_p1_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_miceq) & (~0x1F);
+
+    x6100_control_cmd(x6100_miceq, prev | (level & 0x1F));
+}
+
+void x6100_control_mic_eq_p2_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 5));
+
+    x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 5));
+}
+
+void x6100_control_mic_eq_p3_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 10));
+
+    x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 10));
+}
+
+void x6100_control_mic_eq_p4_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 15));
+
+    x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 15));
+}
+
+void x6100_control_mic_eq_p5_set(uint8_t level) {
+    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 20));
+
+    x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 20));
+}
+
+/* RIT, XIT */
+
+void x6100_control_rit_set(int16_t val) {
+    x6100_control_cmd(x6100_rit, val);
+}
+
+void x6100_control_xit_set(int16_t val) {
+    x6100_control_cmd(x6100_xit, val);
 }

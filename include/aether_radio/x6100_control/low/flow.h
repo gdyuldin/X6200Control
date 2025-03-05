@@ -46,17 +46,33 @@ typedef struct
     bool tx : 1;
     bool atu_status : 1;
     bool vext : 1;
+
     bool charging: 1;
-    uint32_t : 27;
+    bool battery_not_found: 1;
+    bool battery_high_temp: 1;
+    bool pa_high_temp: 1;
+
+    bool: 1;
+    bool: 1;
+    bool: 1;
+    bool power_key: 1;
+
+    bool flag12: 1;  // Flags 12 and 13 controls visibility of widget. 13 used if mode perhaps below 10.
+    bool flag13: 1;
+    bool dc_in_too_low: 1;
+    bool flag15: 1;
+
+    bool battery_low_temp: 1;
+    uint32_t : 15;
 } x6100_flow_flags_t;
 
 typedef struct __attribute__((__packed__))
 {
     uint32_t magic;
-    _Complex float samples[512];
+    float    samples[512];
 
     x6100_flow_flags_t flag;
-    uint8_t reserved_1;
+    uint8_t dbm;
     uint8_t tx_power;
     uint8_t vswr;
     uint8_t alc_level;

@@ -46,26 +46,26 @@ typedef enum
 
     x6100_agcknee_agcslope_agchang = 27,
     x6100_agctime,
-    x6100_monilevel,
+    x6100_monilevel_fftdec_fftzoomcw,
+    x6100_rxfilter,
 
     x6100_ks_km_kimb_cwtone_cwvol_cwtrain = 33,
     x6100_qsktime_kr,
+    x6100_rxeq,
+    x6100_rxeqwfm,
+    x6100_miceq,
 
     x6100_biasdrive_biasfinal = 41,
     x6100_rit,
     x6100_xit,
-    x6100_filter1_low,
-    x6100_filter1_high,
-    x6100_filter2_low,
-    x6100_filter2_high,
+    x6100_filter_ssb,
+    x6100_filter_ssb_2,
+    x6100_filter_cw,
+    x6100_filter_am,
+    x6100_filter_nfm,
+    x6100_filter_wfm,
 
-    x6100_rphscmp = 48, // RX PHS COMP
-    x6100_rmagcmp, // RX MAG COMP
-    x6100_txiofs, // TXI DC OFFSET
-    x6100_txqofs, // TXQ DC OFFSET
-
-    x6100_pwrsync = 53,
-    x6100_last = 55
+    x6100_last = 53
 } x6100_cmd_enum_t;
 
 /* Regs x6100_vfoa... x6100_vfob... */
@@ -93,7 +93,9 @@ typedef enum
     x6100_mode_cw = 4,
     x6100_mode_cwr = 5,
     x6100_mode_am = 6,
-    x6100_mode_nfm = 7
+    x6100_mode_sam = 7,
+    x6100_mode_nfm = 8,
+    x6100_mode_wfm = 9,
 } x6100_mode_t;
 
 typedef enum
@@ -109,12 +111,16 @@ enum
     x6100_sple = 0x00002,
     x6100_voice_rec = 0x00008,
     x6100_swrscan_trx = 0x00010,
+    x6100_tune_flag = 0x00020,
     x6100_atue = 0x01000,
     x6100_atu_tune = 0x02000,
     x6100_modem_trx = 0x04000,
-    x6100_calibration_trx = 0x08000,
+    x6100_calibration = 0x08000,
     x6100_power_off = 0x10000,
-    x6100_iptt = 0x40000
+    x6100_iptt = 0x40000,  // ?
+    x6100_calibration_trx = 0x100000,
+    x6100_bias_drive_off = 0x200000,
+    x6100_bias_final_off = 0x400000,
 };
 
 typedef enum
@@ -147,6 +153,7 @@ typedef enum {
 
 AETHER_X6100CTRL_API bool x6100_control_init();
 AETHER_X6100CTRL_API bool x6100_control_cmd(x6100_cmd_enum_t cmd, uint32_t arg);
+AETHER_X6100CTRL_API bool x6100_control_host_cmd(uint16_t data);
 AETHER_X6100CTRL_API void x6100_control_idle();
 AETHER_X6100CTRL_API bool x6100_control_set_band(uint32_t freq);
 AETHER_X6100CTRL_API uint32_t x6100_control_get(x6100_cmd_enum_t cmd);

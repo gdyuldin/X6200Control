@@ -32,12 +32,28 @@ AETHER_X6100CTRL_API void x6100_control_vfo_pre_set(x6100_vfo_t vfo, x6100_pre_t
 AETHER_X6100CTRL_API void x6100_control_rfg_set(uint8_t rfg);       /* RF gain 0 - 100 */
 AETHER_X6100CTRL_API void x6100_control_txpwr_set(float pwr);       /* TX power 0 - 10.0 */
 AETHER_X6100CTRL_API void x6100_control_sql_set(uint8_t sql);       /* Voice SQL 0 - 100 */
+AETHER_X6100CTRL_API void x6100_control_sql_fm_set(uint8_t sql);
+AETHER_X6100CTRL_API void x6100_control_sql_enable_set(bool on);
+AETHER_X6100CTRL_API void x6100_control_monitor_level_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_fft_dec_set(uint8_t dec);
+AETHER_X6100CTRL_API void x6100_control_fft_zoom_cw_set(uint8_t zoom);
 
 /* Sound settings */
 
 AETHER_X6100CTRL_API void x6100_control_rxvol_set(uint8_t vol);     /* Speaker volume */
 AETHER_X6100CTRL_API void x6100_control_record_set(bool on);        /* Toggle audio stream mic/speaker or RX/TX audio */
 AETHER_X6100CTRL_API void x6100_control_spmode_set(bool phone);     /* Toggle Speaker/Phone audio out */
+
+/* Filters */
+AETHER_X6100CTRL_API void x6100_control_rx_filter_set(uint16_t low, uint16_t high);
+AETHER_X6100CTRL_API void x6100_control_rx_filter_set_low(uint16_t low);
+AETHER_X6100CTRL_API void x6100_control_rx_filter_set_high(uint16_t high);
+
+AETHER_X6100CTRL_API void x6100_control_ssb_filter_set_set(uint16_t low, uint16_t high);
+AETHER_X6100CTRL_API void x6100_control_cw_filter_set_set(uint16_t bw);
+AETHER_X6100CTRL_API void x6100_control_am_filter_set_set(uint16_t bw);
+AETHER_X6100CTRL_API void x6100_control_nfm_filter_set_set(uint16_t bw);
+AETHER_X6100CTRL_API void x6100_control_wfm_filter_set_set(uint16_t bw);
 
 /* Operation */
 
@@ -113,3 +129,33 @@ AETHER_X6100CTRL_API void x6100_control_xit_set(int16_t val);
 
 AETHER_X6100CTRL_API void x6100_control_comp_set(bool on);
 AETHER_X6100CTRL_API void x6100_control_comp_level_set(x6100_comp_level_t level);
+
+
+/* RX EQ */
+AETHER_X6100CTRL_API void x6100_control_rx_eq_set(bool on);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_p1_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_p2_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_p3_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_p4_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_p5_set(uint8_t level);
+
+/* RX EQ WFM */
+AETHER_X6100CTRL_API void x6100_control_rx_eq_wfm_set(bool on);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_wfm_p1_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_wfm_p2_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_wfm_p3_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_wfm_p4_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_rx_eq_wfm_p5_set(uint8_t level);
+
+/* MIC EQ */
+AETHER_X6100CTRL_API void x6100_control_mic_eq_set(bool on);
+AETHER_X6100CTRL_API void x6100_control_mic_eq_p1_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_mic_eq_p2_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_mic_eq_p3_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_mic_eq_p4_set(uint8_t level);
+AETHER_X6100CTRL_API void x6100_control_mic_eq_p5_set(uint8_t level);
+
+/* RIT, XIT */
+
+AETHER_X6100CTRL_API void x6100_control_rit_set(int16_t val);
+AETHER_X6100CTRL_API void x6100_control_xit_set(int16_t val);
