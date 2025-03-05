@@ -154,8 +154,3 @@ AETHER_X6100CTRL_API void x6100_control_mic_eq_p2_set(uint8_t level);
 AETHER_X6100CTRL_API void x6100_control_mic_eq_p3_set(uint8_t level);
 AETHER_X6100CTRL_API void x6100_control_mic_eq_p4_set(uint8_t level);
 AETHER_X6100CTRL_API void x6100_control_mic_eq_p5_set(uint8_t level);
-
-/* RIT, XIT */
-
-AETHER_X6100CTRL_API void x6100_control_rit_set(int16_t val);
-AETHER_X6100CTRL_API void x6100_control_xit_set(int16_t val);

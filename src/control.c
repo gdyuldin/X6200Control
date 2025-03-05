@@ -285,19 +285,19 @@ void x6100_control_sql_enable_set(bool on) {
 }
 
 void x6100_control_monitor_level_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~0xFF);
+    uint32_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~0xFF);
 
     x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, prev | level);
 }
 
 void x6100_control_fft_dec_set(uint8_t dec) {
-    uint8_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~(0xF << 8));
+    uint32_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~(0xF << 8));
 
     x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, prev | (dec & 0xF) << 8);
 }
 
 void x6100_control_fft_zoom_cw_set(uint8_t zoom) {
-    uint8_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~(0xF << 12));
+    uint32_t prev = x6100_control_get(x6100_monilevel_fftdec_fftzoomcw) & (~(0xF << 12));
 
     x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, prev | (zoom & 0xF) << 12);
 }
@@ -534,111 +534,111 @@ void x6100_control_comp_level_set(x6100_comp_level_t level)
 
 /* RX EQ */
 void x6100_control_rx_eq_set(bool on) {
-    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(1 << 25));
+    uint32_t prev = x6100_control_get(x6100_rxeq) & (~(1 << 25));
 
     x6100_control_cmd(x6100_rxeq, prev | (on << 25));
 }
 
 void x6100_control_rx_eq_p1_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeq) & (~0x1F);
+    uint32_t prev = x6100_control_get(x6100_rxeq) & (~0x1F);
 
     x6100_control_cmd(x6100_rxeq, prev | (level & 0x1F));
 }
 
 void x6100_control_rx_eq_p2_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 5));
+    uint32_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 5));
 
     x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 5));
 }
 
 void x6100_control_rx_eq_p3_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 10));
+    uint32_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 10));
 
     x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 10));
 }
 
 void x6100_control_rx_eq_p4_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 15));
+    uint32_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 15));
 
     x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 15));
 }
 
 void x6100_control_rx_eq_p5_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 20));
+    uint32_t prev = x6100_control_get(x6100_rxeq) & (~(0x1F << 20));
 
     x6100_control_cmd(x6100_rxeq, prev | ((level & 0x1F) << 20));
 }
 
 /* RX EQ WFM */
 void x6100_control_rx_eq_wfm_set(bool on) {
-    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(1 << 25));
+    uint32_t prev = x6100_control_get(x6100_rxeqwfm) & (~(1 << 25));
 
     x6100_control_cmd(x6100_rxeqwfm, prev | (on << 25));
 }
 
 void x6100_control_rx_eq_wfm_p1_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~0x1F);
+    uint32_t prev = x6100_control_get(x6100_rxeqwfm) & (~0x1F);
 
     x6100_control_cmd(x6100_rxeqwfm, prev | (level & 0x1F));
 }
 
 void x6100_control_rx_eq_wfm_p2_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 5));
+    uint32_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 5));
 
     x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 5));
 }
 
 void x6100_control_rx_eq_wfm_p3_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 10));
+    uint32_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 10));
 
     x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 10));
 }
 
 void x6100_control_rx_eq_wfm_p4_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 15));
+    uint32_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 15));
 
     x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 15));
 }
 
 void x6100_control_rx_eq_wfm_p5_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 20));
+    uint32_t prev = x6100_control_get(x6100_rxeqwfm) & (~(0x1F << 20));
 
     x6100_control_cmd(x6100_rxeqwfm, prev | ((level & 0x1F) << 20));
 }
 
 /* MIC EQ */
 void x6100_control_mic_eq_set(bool on) {
-    uint8_t prev = x6100_control_get(x6100_miceq) & (~(1 << 25));
+    uint32_t prev = x6100_control_get(x6100_miceq) & (~(1 << 25));
 
     x6100_control_cmd(x6100_miceq, prev | (on << 25));
 }
 
 void x6100_control_mic_eq_p1_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_miceq) & (~0x1F);
+    uint32_t prev = x6100_control_get(x6100_miceq) & (~0x1F);
 
     x6100_control_cmd(x6100_miceq, prev | (level & 0x1F));
 }
 
 void x6100_control_mic_eq_p2_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 5));
+    uint32_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 5));
 
     x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 5));
 }
 
 void x6100_control_mic_eq_p3_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 10));
+    uint32_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 10));
 
     x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 10));
 }
 
 void x6100_control_mic_eq_p4_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 15));
+    uint32_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 15));
 
     x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 15));
 }
 
 void x6100_control_mic_eq_p5_set(uint8_t level) {
-    uint8_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 20));
+    uint32_t prev = x6100_control_get(x6100_miceq) & (~(0x1F << 20));
 
     x6100_control_cmd(x6100_miceq, prev | ((level & 0x1F) << 20));
 }
