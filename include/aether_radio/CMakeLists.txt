@@ -1,1 +1,1 @@
-add_subdirectory(x6100_control)
+add_subdirectory(x6200_control)

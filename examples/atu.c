@@ -1,7 +1,7 @@
 /*
  *  SPDX-License-Identifier: LGPL-2.1-or-later
  *
- *  Aether Xiegu X6100 Control
+ *  Aether Xiegu X6200 Control
  *
  *  Copyright (c) 2022 Belousov Oleg a.k.a. R1CBU
  *  Copyright (c) 2022 Rui Oliveira a.k.a. CT7ALW
@@ -10,9 +10,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include <aether_radio/x6100_control/control.h>
-#include <aether_radio/x6100_control/low/flow.h>
-#include <aether_radio/x6100_control/low/gpio.h>
+#include <aether_radio/x6200_control/control.h>
+#include <aether_radio/x6200_control/low/flow.h>
+#include <aether_radio/x6200_control/low/gpio.h>
 
 typedef enum {
     ATU_IDLE = 0,
@@ -21,24 +21,24 @@ typedef enum {
     ATU_DONE
 } atu_status_t;
 
-static x6100_flow_t pack;
+static x6200_flow_t pack;
 
 int main() {
     atu_status_t atu = ATU_IDLE;
 
-    if (!x6100_control_init())
+    if (!x6200_control_init())
         return 1;
 
-    if (!x6100_flow_init())
+    if (!x6200_flow_init())
         return 1;
 
-    if (!x6100_gpio_init())
+    if (!x6200_gpio_init())
         return 1;
 
-    x6100_control_vfo_freq_set(X6100_VFO_A, 7135000);
+    x6200_control_vfo_freq_set(X6200_VFO_A, 7135000);
 
     while (atu != ATU_DONE) {
-        if (!x6100_flow_read(&pack)) {
+        if (!x6200_flow_read(&pack)) {
             usleep(25000);
             continue;
         }
@@ -51,8 +51,8 @@ int main() {
         switch (atu)
         {
         case ATU_IDLE:
-            x6100_control_atu_tune(true);
-            x6100_gpio_set(x6100_pin_light, 1);
+            x6200_control_atu_tune(true);
+            x6200_gpio_set(x6200_pin_light, 1);
             atu = ATU_START;
             break;
 
@@ -66,8 +66,8 @@ int main() {
         case ATU_RUN:
             if (!pack.flag.tx)
             {
-                x6100_control_atu_tune(false);
-                x6100_gpio_set(x6100_pin_light, 0);
+                x6200_control_atu_tune(false);
+                x6200_gpio_set(x6200_pin_light, 0);
                 atu = ATU_DONE;
             }
             break;

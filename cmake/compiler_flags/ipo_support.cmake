@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 
 include(CheckIPOSupported)
 
-if(NOT AETHER_X6100CTRL_USE_LTO)
+if(NOT AETHER_X6200CTRL_USE_LTO)
   return()
 endif()
 

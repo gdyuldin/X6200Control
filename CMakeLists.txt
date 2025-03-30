@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 project(
-  AetherX6100Control
+  AetherX6200Control
   VERSION 0.15.3
   LANGUAGES C CXX)
 
@@ -9,20 +9,20 @@ project(
 
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries." ON) # CMake option name
 
-option(AETHER_X6100CTRL_DEVELOPER_MODE "Enable developer helpers." OFF)
+option(AETHER_X6200CTRL_DEVELOPER_MODE "Enable developer helpers." OFF)
 
-option(AETHER_X6100CTRL_USE_LTO "Enable link-time optimization when possible." ON)
-option(AETHER_X6100CTRL_USE_FAST_MATH "Use fast math when possible (-ffast-math or /fp:fast)." OFF)
+option(AETHER_X6200CTRL_USE_LTO "Enable link-time optimization when possible." ON)
+option(AETHER_X6200CTRL_USE_FAST_MATH "Use fast math when possible (-ffast-math or /fp:fast)." OFF)
 
-option(AETHER_X6100CTRL_SET_CXX_STANDARD "Set the C++ standard directly." ON)
-option(AETHER_X6100CTRL_USE_CXX_ISO_FLAGS
+option(AETHER_X6200CTRL_SET_CXX_STANDARD "Set the C++ standard directly." ON)
+option(AETHER_X6200CTRL_USE_CXX_ISO_FLAGS
        "Add extra compiler flags to make C++ compilers more compliant." ON)
 
 # --------------------------------------------------------------------------------------------------
 
 # Global variables
-set(AETHER_X6100CTRL_VENDOR_NAME "AetherRadio")
-set(AETHER_X6100CTRL_INCLUDE_DIR "include/aether_radio")
+set(AETHER_X6200CTRL_VENDOR_NAME "AetherRadio")
+set(AETHER_X6200CTRL_INCLUDE_DIR "include/aether_radio")
 
 # Global modules
 include(GenerateExportHeader)
@@ -44,43 +44,43 @@ include(cmake/developer_mode.cmake)
 
 # Sanity checks
 if(UNIX AND NOT APPLE)
-  set(AETHER_X6100CTRL_LINUX TRUE)
+  set(AETHER_X6200CTRL_LINUX TRUE)
 else()
   message(FATAL_ERROR "${PROJECT_NAME} is not compatible with non-Linux systems.")
 endif()
 
-# Aether X6100 Control library
-add_library(aether_x6100_control)
+# Aether X6200 Control library
+add_library(aether_x6200_control)
 set_target_properties(
-  aether_x6100_control
-  PROPERTIES EXPORT_NAME "aether_x6100_control" #
-             OUTPUT_NAME "aether_x6100_control" #
-             DEFINE_SYMBOL "AETHER_X6100CTRL_EXPORTING" #
+  aether_x6200_control
+  PROPERTIES EXPORT_NAME "aether_x6200_control" #
+             OUTPUT_NAME "aether_x6200_control" #
+             DEFINE_SYMBOL "AETHER_X6200CTRL_EXPORTING" #
              VERSION "${PROJECT_VERSION}" #
              SOVERSION "${PROJECT_VERSION_MAJOR}")
 
 # Export header
-set(AETHER_X6100CTRL_EXPORT_HEADER_FILE "${AETHER_X6100CTRL_INCLUDE_DIR}/x6100_control/api.h")
+set(AETHER_X6200CTRL_EXPORT_HEADER_FILE "${AETHER_X6200CTRL_INCLUDE_DIR}/x6200_control/api.h")
 generate_export_header(
-  aether_x6100_control
+  aether_x6200_control
   BASE_NAME
-  "AETHER_X6100CTRL"
+  "AETHER_X6200CTRL"
   EXPORT_MACRO_NAME
-  "AETHER_X6100CTRL_API"
+  "AETHER_X6200CTRL_API"
   EXPORT_FILE_NAME
-  ${AETHER_X6100CTRL_EXPORT_HEADER_FILE})
+  ${AETHER_X6200CTRL_EXPORT_HEADER_FILE})
 target_sources(
-  aether_x6100_control
+  aether_x6200_control
   PUBLIC #
          FILE_SET HEADERS #
          BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/include)
 target_sources(
-  aether_x6100_control #
+  aether_x6200_control #
   PUBLIC #
          FILE_SET HEADERS #
-         FILES ${CMAKE_CURRENT_BINARY_DIR}/${AETHER_X6100CTRL_EXPORT_HEADER_FILE})
+         FILES ${CMAKE_CURRENT_BINARY_DIR}/${AETHER_X6200CTRL_EXPORT_HEADER_FILE})
 
-target_link_libraries(aether_x6100_control PRIVATE
+target_link_libraries(aether_x6200_control PRIVATE
   gpiod
 )
 
@@ -92,8 +92,8 @@ add_subdirectory(src)
 include(cmake/installation.cmake)
 include(cmake/packaging.cmake)
 
-#target_compile_options(aether_x6100_control PRIVATE -g -fno-omit-frame-pointer -fasynchronous-unwind-tables)
-#target_link_options(aether_x6100_control PRIVATE -g -rdynamic)
+#target_compile_options(aether_x6200_control PRIVATE -g -fno-omit-frame-pointer -fasynchronous-unwind-tables)
+#target_link_options(aether_x6200_control PRIVATE -g -rdynamic)
 
-#target_compile_options(aether_x6100_control PRIVATE -fsanitize=address -fsanitize=undefined -fno-sanitize-recover)
-#target_link_options(aether_x6100_control PRIVATE -fsanitize=address -fsanitize=undefined -fno-sanitize-recover -static-libasan -static-libubsan)
+#target_compile_options(aether_x6200_control PRIVATE -fsanitize=address -fsanitize=undefined -fno-sanitize-recover)
+#target_link_options(aether_x6200_control PRIVATE -fsanitize=address -fsanitize=undefined -fno-sanitize-recover -static-libasan -static-libubsan)

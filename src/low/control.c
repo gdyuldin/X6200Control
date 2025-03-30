@@ -1,13 +1,13 @@
 /*
  *  SPDX-License-Identifier: LGPL-2.1-or-later
  *
- *  Aether Xiegu X6100 Control
+ *  Aether Xiegu X6200 Control
  *
  *  Copyright (c) 2022 Belousov Oleg aka R1CBU
  *  Copyright (c) 2022 Rui Oliveira aka CT7ALW
  */
 
-#include "aether_radio/x6100_control/low/control.h"
+#include "aether_radio/x6200_control/low/control.h"
 
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
@@ -30,7 +30,7 @@ typedef struct __attribute__((__packed__))
 typedef struct __attribute__((__packed__))
 {
     uint16_t addr;
-    uint32_t arg[x6100_last + 1];
+    uint32_t arg[x6200_last + 1];
 } all_cmd_struct_t;
 
 static int i2c_fd = -1;
@@ -126,7 +126,7 @@ static bool get_regs(uint16_t reg, void *buf, uint16_t cnt) {
     return true;
 }
 
-bool x6100_control_init()
+bool x6200_control_init()
 {
     if(!i2c_open()) {
         return false;
@@ -161,53 +161,53 @@ bool x6100_control_init()
     }
 
     // // Copy from captures OEM
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_freq, 0x00d81080);
-    // x6100_control_cmd(x6100_vfoa_mode, 0x00000006);
-    // x6100_control_cmd(x6100_vfoa_agc, 0x00000003);
-    // x6100_control_cmd(x6100_vfoa_pre, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_att, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_freq, 0x006b9310);
-    // x6100_control_cmd(x6100_vfob_mode, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_agc, 0x00000003);
-    // x6100_control_cmd(x6100_vfob_pre, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_att, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000001);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_filter_ssb, 0x00960b22);
-    // x6100_control_cmd(x6100_filter_cw, 0xff0600fa);
-    // x6100_control_cmd(x6100_filter_am, 0xee6c1194);
-    // x6100_control_cmd(x6100_filter_nfm, 0xe2b41d4c);
-    // x6100_control_cmd(x6100_filter_wfm, 0xe0c01f40);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_freq, 0x00d81080);
-    // x6100_control_cmd(x6100_vfoa_mode, 0x00000006);
-    // x6100_control_cmd(x6100_vfoa_agc, 0x00000003);
-    // x6100_control_cmd(x6100_vfoa_pre, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_att, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_freq, 0x006b9310);
-    // x6100_control_cmd(x6100_vfob_mode, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_agc, 0x00000003);
-    // x6100_control_cmd(x6100_vfob_pre, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_att, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000001);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_filter_ssb, 0x00960b22);
-    // x6100_control_cmd(x6100_filter_cw, 0xff0600fa);
-    // x6100_control_cmd(x6100_filter_am, 0xee6c1194);
-    // x6100_control_cmd(x6100_filter_nfm, 0xe2b41d4c);
-    // x6100_control_cmd(x6100_filter_wfm, 0xe0c01f40);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_freq, 0x00d81080);
+    // x6200_control_cmd(x6200_vfoa_mode, 0x00000006);
+    // x6200_control_cmd(x6200_vfoa_agc, 0x00000003);
+    // x6200_control_cmd(x6200_vfoa_pre, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_att, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_freq, 0x006b9310);
+    // x6200_control_cmd(x6200_vfob_mode, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_agc, 0x00000003);
+    // x6200_control_cmd(x6200_vfob_pre, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_att, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000001);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_filter_ssb, 0x00960b22);
+    // x6200_control_cmd(x6200_filter_cw, 0xff0600fa);
+    // x6200_control_cmd(x6200_filter_am, 0xee6c1194);
+    // x6200_control_cmd(x6200_filter_nfm, 0xe2b41d4c);
+    // x6200_control_cmd(x6200_filter_wfm, 0xe0c01f40);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_freq, 0x00d81080);
+    // x6200_control_cmd(x6200_vfoa_mode, 0x00000006);
+    // x6200_control_cmd(x6200_vfoa_agc, 0x00000003);
+    // x6200_control_cmd(x6200_vfoa_pre, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_att, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_freq, 0x006b9310);
+    // x6200_control_cmd(x6200_vfob_mode, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_agc, 0x00000003);
+    // x6200_control_cmd(x6200_vfob_pre, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_att, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000001);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_filter_ssb, 0x00960b22);
+    // x6200_control_cmd(x6200_filter_cw, 0xff0600fa);
+    // x6200_control_cmd(x6200_filter_am, 0xee6c1194);
+    // x6200_control_cmd(x6200_filter_nfm, 0xe2b41d4c);
+    // x6200_control_cmd(x6200_filter_wfm, 0xe0c01f40);
 
     // Write calib data
     // iicWrite(0xf000,1,(char *)&this->calibration_data_maybe,0x1fb);
@@ -218,124 +218,124 @@ bool x6100_control_init()
     // send_regs(calib_data_req, sizeof(calib_data_req));
 
     // Send host_cmd
-    if (!x6100_control_host_cmd(0x8003)) {
+    if (!x6200_control_host_cmd(0x8003)) {
         printf("Can't send host_cmd 0x8003\n");
         return false;
     }
-    if (!x6100_control_host_cmd(0x8002)) {
+    if (!x6200_control_host_cmd(0x8002)) {
         printf("Can't send host_cmd 0x8002\n");
         return false;
     }
 
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_freq, 0x00d81080);
-    // x6100_control_cmd(x6100_vfoa_mode, 0x00000006);
-    // x6100_control_cmd(x6100_vfoa_agc, 0x00000003);
-    // x6100_control_cmd(x6100_atu_network, 0x00000000);
-    // x6100_control_cmd(x6100_rxfilter, 0xee6c1194);
-    // x6100_control_cmd(x6100_filter_am, 0xee6c1194);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_freq, 0x00d81080);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_agc, 0x00000003);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_att, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_pre, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfoa_mode, 0x00000006);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_freq, 0x006b9310);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_agc, 0x00000003);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_att, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_pre, 0x00000000);
-    // x6100_control_cmd(x6100_vi_vm, 0x00000000);
-    // x6100_control_cmd(x6100_vfob_mode, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00000000);
-    // x6100_control_cmd(x6100_sple_atue_trx, 0x00001000);
-    // x6100_control_cmd(x6100_rxvol, 0x00000030);
-    // x6100_control_cmd(x6100_rfg_txpwr, 0x00000064);
-    // x6100_control_cmd(x6100_rfg_txpwr, 0x00003264);
-    // x6100_control_cmd(x6100_ling_loutg_imicg_hmicg, 0x0000000a);
-    // x6100_control_cmd(x6100_ling_loutg_imicg_hmicg, 0x00000a0a);
-    // x6100_control_cmd(x6100_ling_loutg_imicg_hmicg, 0x001e0a0a);
-    // x6100_control_cmd(x6100_ling_loutg_imicg_hmicg, 0x0f1e0a0a);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000002);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000002);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000012);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000032);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000032);
-    // x6100_control_cmd(x6100_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000032);
-    // x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, 0x00000032);
-    // x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, 0x00000032);
-    // x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, 0x00190032);
-    // x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, 0x00190032);
-    // x6100_control_cmd(x6100_nrthr_nbw_nbthr_nre_nbe, 0x00000032);
-    // x6100_control_cmd(x6100_nrthr_nbw_nbthr_nre_nbe, 0x00000a32);
-    // x6100_control_cmd(x6100_nrthr_nbw_nbthr_nre_nbe, 0x000a0a32);
-    // x6100_control_cmd(x6100_nrthr_nbw_nbthr_nre_nbe, 0x000a0a32);
-    // x6100_control_cmd(x6100_nrthr_nbw_nbthr_nre_nbe, 0x000a0a32);
-    // x6100_control_cmd(x6100_dnfcnt_dnfwidth_dnfe, 0x000003e8);
-    // x6100_control_cmd(x6100_dnfcnt_dnfwidth_dnfe, 0x000323e8);
-    // x6100_control_cmd(x6100_dnfcnt_dnfwidth_dnfe, 0x000323e8);
-    // x6100_control_cmd(x6100_cmplevel_cmpe, 0x00000000);
-    // x6100_control_cmd(x6100_cmplevel_cmpe, 0x00000000);
-    // x6100_control_cmd(x6100_agcknee_agcslope_agchang, 0x000000e2);
-    // x6100_control_cmd(x6100_agcknee_agcslope_agchang, 0x000004e2);
-    // x6100_control_cmd(x6100_agcknee_agcslope_agchang, 0x000004e2);
-    // x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, 0x0000001e);
-    // x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0000000f);
-    // x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0000010f);
-    // x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0000050f);
-    // x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0025850f);
-    // x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, 0x1625850f);
-    // x6100_control_cmd(x6100_ks_km_kimb_cwtone_cwvol_cwtrain, 0x3625850f);
-    // x6100_control_cmd(x6100_reg_32, 0x00000000);
-    // x6100_control_cmd(x6100_reg_32, 0x0000000a);
-    // x6100_control_cmd(x6100_qsktime_kr, 0x00000064);
-    // x6100_control_cmd(x6100_qsktime_kr, 0x001e0064);
-    // x6100_control_cmd(x6100_biasdrive_biasfinal, 0x00000d20);
-    // x6100_control_cmd(x6100_biasdrive_biasfinal, 0x0eec0d20);
-    // x6100_control_cmd(x6100_rit, 0x00000000);
-    // x6100_control_cmd(x6100_xit, 0x00000000);
-    // x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, 0x0000021e);
-    // x6100_control_cmd(x6100_monilevel_fftdec_fftzoomcw, 0x0000121e);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_freq, 0x00d81080);
+    // x6200_control_cmd(x6200_vfoa_mode, 0x00000006);
+    // x6200_control_cmd(x6200_vfoa_agc, 0x00000003);
+    // x6200_control_cmd(x6200_atu_network, 0x00000000);
+    // x6200_control_cmd(x6200_rxfilter, 0xee6c1194);
+    // x6200_control_cmd(x6200_filter_am, 0xee6c1194);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_freq, 0x00d81080);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_agc, 0x00000003);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_att, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_pre, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfoa_mode, 0x00000006);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_freq, 0x006b9310);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_agc, 0x00000003);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_att, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_pre, 0x00000000);
+    // x6200_control_cmd(x6200_vi_vm, 0x00000000);
+    // x6200_control_cmd(x6200_vfob_mode, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00000000);
+    // x6200_control_cmd(x6200_sple_atue_trx, 0x00001000);
+    // x6200_control_cmd(x6200_rxvol, 0x00000030);
+    // x6200_control_cmd(x6200_rfg_txpwr, 0x00000064);
+    // x6200_control_cmd(x6200_rfg_txpwr, 0x00003264);
+    // x6200_control_cmd(x6200_ling_loutg_imicg_hmicg, 0x0000000a);
+    // x6200_control_cmd(x6200_ling_loutg_imicg_hmicg, 0x00000a0a);
+    // x6200_control_cmd(x6200_ling_loutg_imicg_hmicg, 0x001e0a0a);
+    // x6200_control_cmd(x6200_ling_loutg_imicg_hmicg, 0x0f1e0a0a);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000002);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000002);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000012);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000032);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000032);
+    // x6200_control_cmd(x6200_micsel_pttmode_chge_spmode_auxiqgen_sqlthr, 0x00000032);
+    // x6200_control_cmd(x6200_voxg_voxag_voxdly_voxe, 0x00000032);
+    // x6200_control_cmd(x6200_voxg_voxag_voxdly_voxe, 0x00000032);
+    // x6200_control_cmd(x6200_voxg_voxag_voxdly_voxe, 0x00190032);
+    // x6200_control_cmd(x6200_voxg_voxag_voxdly_voxe, 0x00190032);
+    // x6200_control_cmd(x6200_nrthr_nbw_nbthr_nre_nbe, 0x00000032);
+    // x6200_control_cmd(x6200_nrthr_nbw_nbthr_nre_nbe, 0x00000a32);
+    // x6200_control_cmd(x6200_nrthr_nbw_nbthr_nre_nbe, 0x000a0a32);
+    // x6200_control_cmd(x6200_nrthr_nbw_nbthr_nre_nbe, 0x000a0a32);
+    // x6200_control_cmd(x6200_nrthr_nbw_nbthr_nre_nbe, 0x000a0a32);
+    // x6200_control_cmd(x6200_dnfcnt_dnfwidth_dnfe, 0x000003e8);
+    // x6200_control_cmd(x6200_dnfcnt_dnfwidth_dnfe, 0x000323e8);
+    // x6200_control_cmd(x6200_dnfcnt_dnfwidth_dnfe, 0x000323e8);
+    // x6200_control_cmd(x6200_cmplevel_cmpe, 0x00000000);
+    // x6200_control_cmd(x6200_cmplevel_cmpe, 0x00000000);
+    // x6200_control_cmd(x6200_agcknee_agcslope_agchang, 0x000000e2);
+    // x6200_control_cmd(x6200_agcknee_agcslope_agchang, 0x000004e2);
+    // x6200_control_cmd(x6200_agcknee_agcslope_agchang, 0x000004e2);
+    // x6200_control_cmd(x6200_monilevel_fftdec_fftzoomcw, 0x0000001e);
+    // x6200_control_cmd(x6200_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0000000f);
+    // x6200_control_cmd(x6200_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0000010f);
+    // x6200_control_cmd(x6200_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0000050f);
+    // x6200_control_cmd(x6200_ks_km_kimb_cwtone_cwvol_cwtrain, 0x0025850f);
+    // x6200_control_cmd(x6200_ks_km_kimb_cwtone_cwvol_cwtrain, 0x1625850f);
+    // x6200_control_cmd(x6200_ks_km_kimb_cwtone_cwvol_cwtrain, 0x3625850f);
+    // x6200_control_cmd(x6200_reg_32, 0x00000000);
+    // x6200_control_cmd(x6200_reg_32, 0x0000000a);
+    // x6200_control_cmd(x6200_qsktime_kr, 0x00000064);
+    // x6200_control_cmd(x6200_qsktime_kr, 0x001e0064);
+    // x6200_control_cmd(x6200_biasdrive_biasfinal, 0x00000d20);
+    // x6200_control_cmd(x6200_biasdrive_biasfinal, 0x0eec0d20);
+    // x6200_control_cmd(x6200_rit, 0x00000000);
+    // x6200_control_cmd(x6200_xit, 0x00000000);
+    // x6200_control_cmd(x6200_monilevel_fftdec_fftzoomcw, 0x0000021e);
+    // x6200_control_cmd(x6200_monilevel_fftdec_fftzoomcw, 0x0000121e);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
 
 
     // 0bb8 - 3000, 012c - 300
-    all_cmd.arg[x6100_filter_ssb] = 0xb80b2c01;
-    all_cmd.arg[x6100_filter_ssb_2] = 0xb80b2c01;
+    all_cmd.arg[x6200_filter_ssb] = 0xb80b2c01;
+    all_cmd.arg[x6200_filter_ssb_2] = 0xb80b2c01;
     // 0320 - 800
-    all_cmd.arg[x6100_filter_cw] = 0x2003fce0;
+    all_cmd.arg[x6200_filter_cw] = 0x2003fce0;
     // 1707 - 6000
-    all_cmd.arg[x6100_filter_am] = 0x7017e890;
+    all_cmd.arg[x6200_filter_am] = 0x7017e890;
     // 2328 - 9000
-    all_cmd.arg[x6100_filter_nfm] = 0x2823dcd8;
+    all_cmd.arg[x6200_filter_nfm] = 0x2823dcd8;
     // 3e80 - 16000
-    all_cmd.arg[x6100_filter_wfm] = 0x803ec180;
+    all_cmd.arg[x6200_filter_wfm] = 0x803ec180;
 
     // // "[INFO] Baseband is ready"
     // // "160m 1800000  - 2000000"
@@ -360,7 +360,7 @@ bool x6100_control_init()
 
 
 
-    // // x6100_rx_filters - same as for other filters
+    // // x6200_rx_filters - same as for other filters
     // // host_cmd?
 
     // // save calibrate params
@@ -377,50 +377,50 @@ bool x6100_control_init()
 
     // // slot_receiveCommand
 
-    // x6100_control_cmd(x6100_miceq, 0x00000000);
-    // x6100_control_cmd(x6100_rxeqwfm, 0x00000000);
-    // x6100_control_cmd(x6100_rxeq, 0x00000000);
-    // x6100_control_cmd(x6100_cmplevel_cmpe, 0x00000000);
-    // x6100_control_cmd(x6100_reg_32, 0x0000000a);
-    // x6100_control_cmd(x6100_voxg_voxag_voxdly_voxe, 0x00190032);
+    // x6200_control_cmd(x6200_miceq, 0x00000000);
+    // x6200_control_cmd(x6200_rxeqwfm, 0x00000000);
+    // x6200_control_cmd(x6200_rxeq, 0x00000000);
+    // x6200_control_cmd(x6200_cmplevel_cmpe, 0x00000000);
+    // x6200_control_cmd(x6200_reg_32, 0x0000000a);
+    // x6200_control_cmd(x6200_voxg_voxag_voxdly_voxe, 0x00190032);
 
-    // x6100_control_cmd(x6100_vi_vm, 0);
-    // x6100_control_cmd(x6100_vi_vm, 1);
-    // x6100_control_cmd(x6100_vi_vm, 0);
-    // x6100_control_cmd(x6100_filter_ssb, 0xb80b2c01);
-    // x6100_control_cmd(x6100_filter_ssb_2, 0xb80b2c01);
-    // x6100_control_cmd(x6100_filter_cw, 0x2003fce0);
-    // x6100_control_cmd(x6100_filter_am, 0xee6c1194);
-    // x6100_control_cmd(x6100_filter_nfm, 0xe2b41d4c);
-    // x6100_control_cmd(x6100_filter_wfm, 0xe0c01f40);
+    // x6200_control_cmd(x6200_vi_vm, 0);
+    // x6200_control_cmd(x6200_vi_vm, 1);
+    // x6200_control_cmd(x6200_vi_vm, 0);
+    // x6200_control_cmd(x6200_filter_ssb, 0xb80b2c01);
+    // x6200_control_cmd(x6200_filter_ssb_2, 0xb80b2c01);
+    // x6200_control_cmd(x6200_filter_cw, 0x2003fce0);
+    // x6200_control_cmd(x6200_filter_am, 0xee6c1194);
+    // x6200_control_cmd(x6200_filter_nfm, 0xe2b41d4c);
+    // x6200_control_cmd(x6200_filter_wfm, 0xe0c01f40);
 
 
-    all_cmd.arg[x6100_vfoa_ham_band] = 0;
-    all_cmd.arg[x6100_vfoa_freq] = 14074000;
-    all_cmd.arg[x6100_vfoa_mode] = x6100_mode_usb;
-    all_cmd.arg[x6100_vfoa_agc] = x6100_agc_auto;
+    all_cmd.arg[x6200_vfoa_ham_band] = 0;
+    all_cmd.arg[x6200_vfoa_freq] = 14074000;
+    all_cmd.arg[x6200_vfoa_mode] = x6200_mode_usb;
+    all_cmd.arg[x6200_vfoa_agc] = x6200_agc_auto;
 
-    all_cmd.arg[x6100_vfob_ham_band] = 0;
-    all_cmd.arg[x6100_vfob_freq] = 14074000;
-    all_cmd.arg[x6100_vfob_mode] = x6100_mode_usb;
-    all_cmd.arg[x6100_vfob_agc] = x6100_agc_auto;
+    all_cmd.arg[x6200_vfob_ham_band] = 0;
+    all_cmd.arg[x6200_vfob_freq] = 14074000;
+    all_cmd.arg[x6200_vfob_mode] = x6200_mode_usb;
+    all_cmd.arg[x6200_vfob_agc] = x6200_agc_auto;
 
-    // all_cmd.arg[x6100_sple_atue_trx] = 0x00001000;
+    // all_cmd.arg[x6200_sple_atue_trx] = 0x00001000;
 
-    // all_cmd.arg[x6100_reg_32] = 0x0000000a;
-    all_cmd.arg[x6100_rxvol] = 0;
-    all_cmd.arg[x6100_rfg_txpwr] = (10 << 8) | 64;
+    // all_cmd.arg[x6200_reg_32] = 0x0000000a;
+    all_cmd.arg[x6200_rxvol] = 0;
+    all_cmd.arg[x6200_rfg_txpwr] = (10 << 8) | 64;
 
-    // all_cmd.arg[x6100_agcknee_agcslope_agchang] = 0x000006C4;
-    // all_cmd.arg[x6100_agctime] = 500;
+    // all_cmd.arg[x6200_agcknee_agcslope_agchang] = 0x000006C4;
+    // all_cmd.arg[x6200_agctime] = 500;
 
-    // all_cmd.arg[x6100_filter1_low] = (uint32_t) 50.0f;
-    // all_cmd.arg[x6100_filter1_high] = (uint32_t) 2950.0;
-    // all_cmd.arg[x6100_filter2_low] = (uint32_t) 50.0f;
-    // all_cmd.arg[x6100_filter2_high] = (uint32_t) 2950.0f;
+    // all_cmd.arg[x6200_filter1_low] = (uint32_t) 50.0f;
+    // all_cmd.arg[x6200_filter1_high] = (uint32_t) 2950.0;
+    // all_cmd.arg[x6200_filter2_low] = (uint32_t) 50.0f;
+    // all_cmd.arg[x6200_filter2_high] = (uint32_t) 2950.0f;
 
-    // all_cmd.arg[x6100_pwrsync] = 2000000;
-    // all_cmd.arg[x6100_last] = 0x100001;
+    // all_cmd.arg[x6200_pwrsync] = 2000000;
+    // all_cmd.arg[x6200_last] = 0x100001;
 
     if (!send_regs(&all_cmd, sizeof(all_cmd))) {
         printf("Can't write data to BASE\n");
@@ -431,7 +431,7 @@ bool x6100_control_init()
     return true;
 }
 
-bool x6100_control_host_cmd(uint16_t data)
+bool x6200_control_host_cmd(uint16_t data)
 {
     uint16_t command[2];
     uint16_t addr = 0xfffe;
@@ -442,7 +442,7 @@ bool x6100_control_host_cmd(uint16_t data)
     return send_regs(&command, sizeof(command));
 }
 
-bool x6100_control_cmd(x6100_cmd_enum_t cmd, uint32_t arg)
+bool x6200_control_cmd(x6200_cmd_enum_t cmd, uint32_t arg)
 {
     all_cmd.arg[cmd] = arg;
 
@@ -456,12 +456,12 @@ bool x6100_control_cmd(x6100_cmd_enum_t cmd, uint32_t arg)
 }
 
 
-uint32_t x6100_control_get(x6100_cmd_enum_t cmd)
+uint32_t x6200_control_get(x6200_cmd_enum_t cmd)
 {
     return all_cmd.arg[cmd];
 }
 
-char *x6100_control_get_fw_version()
+char *x6200_control_get_fw_version()
 {
     static char version[0x80] = "\0";
     if (get_regs(0, version, 0x80))
@@ -470,7 +470,7 @@ char *x6100_control_get_fw_version()
         return NULL;
 }
 
-void x6100_control_idle()
+void x6200_control_idle()
 {
     if (!send_regs(&all_cmd, sizeof(all_cmd))) {
         i2c_close();
@@ -531,7 +531,7 @@ static uint8_t band_index(int freq)
     }
 }
 
-bool x6100_control_set_band(uint32_t freq)
+bool x6200_control_set_band(uint32_t freq)
 {
     uint8_t band = band_index(freq);
 
@@ -539,7 +539,7 @@ bool x6100_control_set_band(uint32_t freq)
     {
         cur_band = band;
 
-        // x6100_control_cmd(x6100_vi_vm, cur_band << 8);
+        // x6200_control_cmd(x6200_vi_vm, cur_band << 8);
         return true;
     }
     return false;
