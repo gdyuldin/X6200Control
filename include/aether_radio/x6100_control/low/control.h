@@ -43,13 +43,14 @@ typedef enum
     x6100_nrthr_nbw_nbthr_nre_nbe,
     x6100_dnfcnt_dnfwidth_dnfe,
     x6100_cmplevel_cmpe,
-
+    // 26 - 1, 0
     x6100_agcknee_agcslope_agchang = 27,
     x6100_agctime,
     x6100_monilevel_fftdec_fftzoomcw,
     x6100_rxfilter,
 
-    x6100_ks_km_kimb_cwtone_cwvol_cwtrain = 33,
+    x6100_reg_32 = 32,
+    x6100_ks_km_kimb_cwtone_cwvol_cwtrain,
     x6100_qsktime_kr,
     x6100_rxeq,
     x6100_rxeqwfm,
@@ -148,6 +149,12 @@ typedef enum {
     x6100_comp_1_4,
     x6100_comp_1_8
 } x6100_comp_level_t;
+
+typedef enum {
+    x6100_dnf_off = 0,
+    x6100_dnf_manual,
+    x6100_dnf_auto,
+} x6100_dnf_mode_t;
 
 /* Functions */
 

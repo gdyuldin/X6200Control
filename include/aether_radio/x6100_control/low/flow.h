@@ -57,8 +57,8 @@ typedef struct
     bool: 1;
     bool power_key: 1;
 
-    bool flag12: 1;  // Flags 12 and 13 controls visibility of widget. 13 used if mode perhaps below 10.
-    bool flag13: 1;
+    bool sql_mute: 1;  // Flags 12 and 13 controls visibility of widget. 13 used if mode perhaps below 10.
+    bool sql_fm_mute: 1;
     bool dc_in_too_low: 1;
     bool flag15: 1;
 
