@@ -1295,3 +1295,9 @@ FodyWeavers.xsd
 .VSCodeCounter/
 .scrap/
 .vscode/
+
+CMakeCache.txt
+CMakeFiles/
+build.ninja
+CPackConfig.cmake
+CPackSourceConfig.cmake
