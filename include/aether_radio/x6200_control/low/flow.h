@@ -69,7 +69,7 @@ typedef struct
 typedef struct __attribute__((__packed__))
 {
     uint32_t magic;
-    float    samples[512];
+    uint8_t  samples[512];
 
     x6200_flow_flags_t flag;
     uint8_t dbm;

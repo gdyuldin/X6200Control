@@ -211,11 +211,18 @@ bool x6200_control_init()
 
     // Write calib data
     // iicWrite(0xf000,1,(char *)&this->calibration_data_maybe,0x1fb);
-    // char calib_data_req[sizeof(calibration_data) + 2];
-    // calib_data_req[0] = 0xf0;
-    // calib_data_req[1] = 0x00;
-    // memcpy(calib_data_req + 2, calibration_data, sizeof(calibration_data));
-    // send_regs(calib_data_req, sizeof(calib_data_req));
+
+    // Open TX
+    if ((calibration_data[280] == 0) || (calibration_data[280] == 1)) {
+        calibration_data[280] = 1;
+    } else {
+        printf("Wrong calibration data for open TX: %x\n", calibration_data[280]);
+    }
+    char calib_data_req[sizeof(calibration_data) + 2];
+    calib_data_req[0] = 0xf0;
+    calib_data_req[1] = 0x00;
+    memcpy(calib_data_req + 2, calibration_data, sizeof(calibration_data));
+    send_regs(calib_data_req, sizeof(calib_data_req));
 
     // Send host_cmd
     if (!x6200_control_host_cmd(0x8003)) {
